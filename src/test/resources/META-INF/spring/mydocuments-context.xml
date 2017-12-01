@@ -1,21 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:jms="http://www.springframework.org/schema/jms"
-	xmlns:rabbit="http://www.springframework.org/schema/rabbit"
 	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
 	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
-	xmlns:p="http://www.springframework.org/schema/p"
-	xmlns:task=http://www.springframework.org/schema/task
 	xsi:schemaLocation="
 	  http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-4.0.xsd
-    http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-4.0.xsd
-    http://www.springframework.org/schema/rabbit http://www.springframework.org/schema/rabbit/spring-rabbit-1.2.xsd
     http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+    http://www.springframework.org/schema/data/mongo http://www.springframework.org/schema/data/mongo/spring-mongo-1.4.xsd">
   
   <context:component-scan base-package="com.apress.isf.spring"/>
   <context:property-placeholder location="email.properties"/>
+  
+  <!-- MongoDB -->
+  <mongo:mongo id="mongo" host="127.0.0.1" port="27017" />
+  <mongo:db-factory id="mongoDBFactory" dbname="mydocuments" />
+  <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+  <constructor-arg name="mongoDBFactory" ref="mongoDBFactory" />
+  </bean>
+
+  
+  <bean id="security" class="com.apress.isf.spring.service.SecurityServiceFacade">
+  	<property name="login" ref=" groovyloginScript" />
+  </bean>
+  
+  
   <!-- Task Scheduling -->
   <task:annotation-driven/>
   
