@@ -1,5 +1,8 @@
 package com.apress.isf.spring.mongo;
 
+import static org.springframework.data.mongodb.core.query.Criteria.where;
+import static org.springframework.data.mongodb.core.query.Query.query;
+
 import java.util.Date;
 import java.util.List;
 

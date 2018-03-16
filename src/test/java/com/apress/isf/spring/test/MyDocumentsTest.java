@@ -1,7 +1,8 @@
 package com.apress.isf.spring.test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,10 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.apress.isf.java.model.Document;
+import com.apress.isf.java.model.Type;
+import com.apress.isf.java.service.DocumentService;
 import com.apress.isf.java.service.TypeService;
 import com.apress.isf.spring.data.DocumentDAO;
 import com.apress.isf.spring.data.TypeDAO;
-import com.apress.isf.spring.service.SecurityServiceFacade;
 
 /**
  * 
@@ -34,15 +37,36 @@ public class MyDocumentsTest {
 	DocumentDAO mongoDocumentDAO;
 	@Autowired
 	TypeDAO mongoTypeDAO;
+	
 	@Autowired
-	TypeService typeService;
+	DocumentService documentFacade;
+	@Autowired
+	TypeService typeFacade;
 	
 	@Test
-	public void testSecurity(){
-		log.debug("Testing security ...");
-		assertNotNull(security);
+	public void testMongoDBMigration(){
+		log.debug("Testing Spring Data MongoDB - Migration (Run only once)...");
+		assertNotNull(mongoDocumentDAO);
+		assertNotNull(documentFacade);
+		assertNotNull(typeFacade);
+		assertNotNull(mongoTypeDAO);
 		
-		assertTrue(security.areCreditialsValid(EMAIL, PASSWORD));
+		List<Type> types = typeFacade.getAllDefinedTypes();
+		assertNotNull(types);
+		assertEquals(4, types.size());
+		
+		for(Type type: types){
+			mongoTypeDAO.save(type);
+		}
+		
+		List<Document> documents = documentFacade.getAllDocuments();
+		assertNotNull(documents);
+		assertEquals(6, documents.size());
+		
+		for(Document document : documents){
+			mongoDocumentDAO.save(document.getDocumentId(), document);
+		}
+
 	}
 
 }
